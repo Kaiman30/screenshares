@@ -1,6 +1,7 @@
-# Borrowed base scipt from nolww and added sig checks
 Start-Sleep -Seconds 1
 Write-Host "Optimized by Lily (the BEST sser****)" -ForegroundColor Red
+Write-Host " -> Edited by Kaiman4ik :3" -ForegroundColor DarkMagenta
+Write-Host ""
 Write-Host "Analyzing scheduled tasks..." -ForegroundColor Red
 Start-Sleep -Seconds 1
 
@@ -27,7 +28,7 @@ function Get-FullPath {
     return $null
 }
 
-$suspectPrograms = "cmd.exe", "powershell.exe", "powershell_ise.exe", "rundll32.exe", "regsvr32.exe", "taskmgr.exe", "LaunchTM.exe", "WinRAR.exe"
+$suspectPrograms = "cmd.exe", "powershell.exe", "powershell_ise.exe", "rundll32.exe", "regsvr32.exe", "taskmgr.exe", "LaunchTM.exe", "WinRAR.exe", "music.exe", "discord.exe"
 
 $tasks = Get-ScheduledTask | ForEach-Object {
     $task = $_

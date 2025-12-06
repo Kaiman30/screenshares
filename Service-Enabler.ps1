@@ -6,10 +6,11 @@ ___       ___  ___       ___  _________  ___  ___
   \ \  \____\ \  \ \  \____\ \  \   \ \  \ \ \  \ \  \ 
    \ \_______\ \__\ \_______\ \__\   \ \__\ \ \__\ \__\
     \|_______|\|__|\|_______|\|__|    \|__|  \|__|\|__|
-Made with love by lily<3                                                       
-                                                       
-                                                       
+Made by lily                                                    
+                                                                                                   
 "@ -ForegroundColor Cyan
+Write-Host " -> Edited by Kaiman4ik :3" -ForegroundColor DarkMagenta
+Write-Host ""
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -105,7 +106,7 @@ $serviceDescriptions = @{
     "DusmSvc" = "Data Usage Service"
 }
 
-function Refresh-Services {
+function Update-Services {
     $listView.Items.Clear()
     
     foreach ($serviceName in $servicesToCheck) {
@@ -165,7 +166,7 @@ $buttonEnable.Add_Click({
         }
     }
     
-    Refresh-Services
+    Update-Services
     
     if ($selectedCount -eq 0) {
         $statusLabel.Text = "Please select at least one service to enable"
@@ -175,9 +176,9 @@ $buttonEnable.Add_Click({
 })
 
 $buttonRefresh.Add_Click({
-    Refresh-Services
+    Update-Services
     $statusLabel.Text = "Service list refreshed"
 })
 
-Refresh-Services
+Update-Services
 [void]$form.ShowDialog()

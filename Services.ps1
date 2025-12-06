@@ -1,20 +1,21 @@
 $isAdmin = [System.Security.Principal.WindowsPrincipal]::new([System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) {
     Write-Host "`n╔══════════════════════════════════════════════════╗" -ForegroundColor Red
-    Write-Host "║           ADMINISTRATOR PRIVILEGES REQUIRED       ║" -ForegroundColor Red
-    Write-Host "║     Please run this script as Administrator!      ║" -ForegroundColor Red
+    Write-Host "║           ADMINISTRATOR PRIVILEGES REQUIRED      ║" -ForegroundColor Red
+    Write-Host "║     Please run this script as Administrator!     ║" -ForegroundColor Red
     Write-Host "╚══════════════════════════════════════════════════╝" -ForegroundColor Red
     exit
 }
 
-Write-Host "made with love by lily<3" -ForegroundColor Cyan
+Write-Host "Made by lily<3" -ForegroundColor Cyan
+Write-Host " -> Edited by Kaiman4ik :3" -ForegroundColor DarkMagenta
 Write-Host ""
 
 try {
     $bootTime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
     $uptime = (Get-Date) - $bootTime
     Write-Host "SYSTEM BOOT TIME" -ForegroundColor Cyan
-    Write-Host ("  Last Boot: {0}" -f $bootTime.ToString("yyyy-MM-dd HH:mm:ss")) -ForegroundColor White
+    Write-Host ("  Last Boot: {0}" -f $bootTime.ToString("dd.MM.yyyy HH:mm:ss")) -ForegroundColor White
     Write-Host ("  Uptime: {0} days, {1:D2}:{2:D2}:{3:D2}" -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds) -ForegroundColor White
 } catch {
     Write-Host "Unable to retrieve boot time information" -ForegroundColor Red
@@ -107,43 +108,43 @@ foreach ($s in $settings) {
     }
 }
 
-function Check-EventLog {
+function Search-EventLog {
     param ($logName, $eventID, $message)
-    $event = Get-WinEvent -LogName $logName -FilterXPath "*[System[EventID=$eventID]]" -MaxEvents 1 -ErrorAction SilentlyContinue
-    if ($event) {
+    $event_ = Get-WinEvent -LogName $logName -FilterXPath "*[System[EventID=$eventID]]" -MaxEvents 1 -ErrorAction SilentlyContinue
+    if ($event_) {
         Write-Host "  $message at: " -NoNewline -ForegroundColor White
-        Write-Host $event.TimeCreated.ToString("MM/dd HH:mm") -ForegroundColor Yellow
+        Write-Host $event_.TimeCreated.ToString("dd/MM HH:mm") -ForegroundColor Yellow
     } else {
         Write-Host "  $message - No records found" -ForegroundColor Green
     }
 }
 
-function Check-RecentEventLog {
+function Search-RecentEventLog {
     param ($logName, $eventIDs, $message)
-    $event = Get-WinEvent -LogName $logName -FilterXPath "*[System[EventID=$($eventIDs -join ' or EventID=')]]" -MaxEvents 1 -ErrorAction SilentlyContinue
-    if ($event) {
-        Write-Host "  $message (ID: $($event.Id)) at: " -NoNewline -ForegroundColor White
-        Write-Host $event.TimeCreated.ToString("MM/dd HH:mm") -ForegroundColor Yellow
+    $event_ = Get-WinEvent -LogName $logName -FilterXPath "*[System[EventID=$($eventIDs -join ' or EventID=')]]" -MaxEvents 1 -ErrorAction SilentlyContinue
+    if ($event_) {
+        Write-Host "  $message (ID: $($event_.Id)) at: " -NoNewline -ForegroundColor White
+        Write-Host $event.TimeCreated.ToString("dd/MM HH:mm") -ForegroundColor Yellow
     } else {
         Write-Host "  $message - No records found" -ForegroundColor Green
     }
 }
 
-function Check-DeviceDeleted {
+function Search-DeviceDeleted {
     try {
-        $event = Get-WinEvent -LogName "Microsoft-Windows-Kernel-PnP/Configuration" -FilterXPath "*[System[EventID=400]]" -MaxEvents 1 -ErrorAction SilentlyContinue
-        if ($event) {
+        $event_ = Get-WinEvent -LogName "Microsoft-Windows-Kernel-PnP/Configuration" -FilterXPath "*[System[EventID=400]]" -MaxEvents 1 -ErrorAction SilentlyContinue
+        if ($event_) {
             Write-Host "  Device configuration changed at: " -NoNewline -ForegroundColor White
-            Write-Host $event.TimeCreated.ToString("MM/dd HH:mm") -ForegroundColor Yellow
+            Write-Host $event_.TimeCreated.ToString("dd/MM HH:mm") -ForegroundColor Yellow
             return
         }
     } catch {}
 
     try {
-        $event = Get-WinEvent -FilterHashtable @{LogName="System"; ID=225} -MaxEvents 1 -ErrorAction SilentlyContinue
-        if ($event) {
+        $event_ = Get-WinEvent -FilterHashtable @{LogName="System"; ID=225} -MaxEvents 1 -ErrorAction SilentlyContinue
+        if ($event_) {
             Write-Host "  Device removed at: " -NoNewline -ForegroundColor White
-            Write-Host $event.TimeCreated.ToString("MM/dd HH:mm") -ForegroundColor Yellow
+            Write-Host $event_.TimeCreated.ToString("dd/MM HH:mm") -ForegroundColor Yellow
             return
         }
     } catch {}
@@ -152,7 +153,7 @@ function Check-DeviceDeleted {
         $events = Get-WinEvent -LogName "System" | Where-Object {$_.Id -eq 225 -or $_.Id -eq 400} | Sort-Object TimeCreated -Descending | Select-Object -First 1
         if ($events) {
             Write-Host "  Last device change at: " -NoNewline -ForegroundColor White
-            Write-Host $events.TimeCreated.ToString("MM/dd HH:mm") -ForegroundColor Yellow
+            Write-Host $events.TimeCreated.ToString("dd/MM HH:mm") -ForegroundColor Yellow
             return
         }
     } catch {}
@@ -162,12 +163,12 @@ function Check-DeviceDeleted {
 
 Write-Host "`nEVENT LOGS" -ForegroundColor Cyan
 
-Check-EventLog "Application" 3079 "USN Journal cleared"
-Check-RecentEventLog "System" @(104, 1102) "Event Logs cleared"
-Check-EventLog "System" 1074 "Last PC Shutdown"
-Check-EventLog "Security" 4616 "System time changed"
-Check-EventLog "System" 6005 "Event Log Service started"
-Check-DeviceDeleted
+Search-EventLog "Application" 3079 "USN Journal cleared"
+Search-RecentEventLog "System" @(104, 1102) "Event Logs cleared"
+Search-EventLog "System" 1074 "Last PC Shutdown"
+Search-EventLog "Security" 4616 "System time changed"
+Search-EventLog "System" 6005 "Event Log Service started"
+Search-DeviceDeleted
 
 
 $prefetchPath = "$env:SystemRoot\Prefetch"
@@ -309,7 +310,7 @@ try {
             }
             
             Write-Host "  Last Modified: " -NoNewline -ForegroundColor White
-            Write-Host $latestModTime.ToString("yyyy-MM-dd HH:mm:ss") -ForegroundColor Yellow
+            Write-Host $latestModTime.ToString("dd.MM.yyyy HH:mm:ss") -ForegroundColor Yellow
             
             if ($allDeletedItems.Count -gt 0) {
                 Write-Host "  Total Items: " -NoNewline -ForegroundColor White
@@ -326,13 +327,13 @@ try {
             Write-Host "  Status: " -NoNewline -ForegroundColor White
             Write-Host "Emptyy" -ForegroundColor Green
             Write-Host "  Last Modified: " -NoNewline -ForegroundColor White
-            Write-Host $recycleBinFolder.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss") -ForegroundColor Green
+            Write-Host $recycleBinFolder.LastWriteTime.ToString("dd.MM.yyyy HH:mm:ss") -ForegroundColor Green
         }
         
         $clearEvent = Get-WinEvent -FilterHashtable @{LogName="System"; Id=10006} -MaxEvents 1 -ErrorAction SilentlyContinue
         if ($clearEvent) {
             Write-Host "  Last Cleared (Event): " -NoNewline -ForegroundColor White
-            Write-Host $clearEvent.TimeCreated.ToString("yyyy-MM-dd HH:mm:ss") -ForegroundColor Red
+            Write-Host $clearEvent.TimeCreated.ToString("dd.MM.yyyy HH:mm:ss") -ForegroundColor Red
         }
     } else {
         Write-Host "  Recycle Bin not found at: $recycleBinPath" -ForegroundColor Yellow
@@ -346,7 +347,7 @@ try {
     if (Test-Path $consoleHistoryPath) {
         $historyFile = Get-Item -Path $consoleHistoryPath -Force
         Write-Host "    Last Modified: " -NoNewline -ForegroundColor White
-        Write-Host $historyFile.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss") -ForegroundColor Yellow
+        Write-Host $historyFile.LastWriteTime.ToString("dd.MM.yyyy HH:mm:ss") -ForegroundColor Yellow
         
 
         $attributes = $historyFile.Attributes
@@ -371,4 +372,4 @@ try {
     Write-Host "  Error accessing system information: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-Write-Host "`nCheck Complete, hit up @praiselily if u run into any issues." -ForegroundColor Cyan
+Write-Host "`nCheck Complete, hit up telegram: @PyProgger if u run into any issues." -ForegroundColor Cyan
