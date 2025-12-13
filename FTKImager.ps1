@@ -31,8 +31,8 @@ try {
     Write-Host "Installing FTK Imager to: $installDir" -ForegroundColor Cyan
 
     
-    $args = @("/S", "/D=$installDir")
-    $proc = Start-Process -FilePath $tempInstaller -ArgumentList $args -Wait -PassThru -ErrorAction Stop
+    $args_ = @("/S", "/D=$installDir")
+    $proc = Start-Process -FilePath $tempInstaller -ArgumentList $args_ -Wait -PassThru -ErrorAction Stop
 
    
     if ($null -ne $proc -and $proc.HasExited) {

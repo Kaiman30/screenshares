@@ -308,10 +308,10 @@ function Add-ManualMappings {
         Write-Host "`nEnter volumes (for example, '3 C' for HarddiskVolume3 -> C:)" -ForegroundColor White
         Write-Host "or press enter" -ForegroundColor Gray
         
-        $input = Read-Host "mappin"
+        $input_ = Read-Host "mappin"
         
-        if (-not [string]::IsNullOrWhiteSpace($input)) {
-            if ($input -match '^(\d+)\s+([A-Za-z])$') {
+        if (-not [string]::IsNullOrWhiteSpace($input_)) {
+            if ($input_ -match '^(\d+)\s+([A-Za-z])$') {
                 $volumeNumber = $matches[1]
                 $driveLetter = $matches[2].ToUpper()
                 
@@ -327,7 +327,7 @@ function Add-ManualMappings {
                 Write-Host "bad format Use: 'number driveletter' (like '3 C')" -ForegroundColor Red
             }
         }
-    } until ([string]::IsNullOrWhiteSpace($input))
+    } until ([string]::IsNullOrWhiteSpace($input_))
     
     return $Mappings
 }
